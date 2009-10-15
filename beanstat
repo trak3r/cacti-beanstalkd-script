@@ -1,0 +1,74 @@
+#!/bin/sh
+PATH=/usr/local/bin:$PATH
+exec ruby -x"/path/to/where/you/put/this/script" $0 "$@"
+#!/usr/bin/env ruby
+require 'optparse'
+require 'ostruct'
+require 'rubygems'
+require 'beanstalk-client'
+options = OpenStruct.new
+OptionParser.new do |opts|
+  opts.banner = "Usage: beanstat [options]"
+  opts.on( '-h', '--host HOST', 'Connect to HOST' ) do |host|
+    options.host = host
+  end
+  opts.on( '-p', '--port PORT', 'Connect to PORT' ) do |port|
+    options.port = (port || 11300)
+  end
+  opts.on( '-s', '--stat STAT', 'Get value for STAT' ) do |stat|
+    options.stat = stat
+  end
+  opts.on( '-?', '--help', 'Display this screen' ) do
+    puts opts
+    exit
+  end
+end.parse!
+beanstalk = Beanstalk::Pool.new(["#{options.host}:#{options.port}"])
+stats = beanstalk.stats
+puts "#{options.stat}:#{stats[options.stat]}"
+#
+# stat options:
+#
+# binlog-current-index
+# binlog-max-size
+# binlog-oldest-index
+# cmd-bury
+# cmd-delete
+# cmd-ignore
+# cmd-kick
+# cmd-list-tube-used
+# cmd-list-tubes
+# cmd-list-tubes-watched
+# cmd-peek
+# cmd-peek-buried
+# cmd-peek-delayed
+# cmd-peek-ready
+# cmd-put
+# cmd-release
+# cmd-reserve
+# cmd-reserve-with-timeout
+# cmd-stats
+# cmd-stats-job
+# cmd-stats-tube
+# cmd-touch
+# cmd-use
+# cmd-watch
+# current-connections
+# current-jobs-buried
+# current-jobs-delayed
+# current-jobs-ready
+# current-jobs-reserved
+# current-jobs-urgent
+# current-producers
+# current-tubes
+# current-waiting
+# current-workers
+# job-timeouts
+# max-job-size
+# pid
+# rusage-stime
+# rusage-utime
+# total-connections
+# total-jobs
+# uptime
+# version
